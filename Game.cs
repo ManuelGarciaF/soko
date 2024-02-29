@@ -19,7 +19,7 @@ static class Game
 
         Rectangle boardRect = GetCenteredBoardRect();
 
-        board = Levels.Level1;
+        // board = Levels.Level1;
 
         while (!WindowShouldClose())
         {
@@ -71,18 +71,38 @@ public class Board
             for (int y = 0; y < board.GetLength(1); y++)
             {
                 Rectangle tileRect = new Rectangle(rect.X + x * tileSize, rect.Y + y * tileSize, tileSize, tileSize);
-                DrawRectangleRec(tileRect, Colors.CellColors[board[x,y]]);
+                board[x, y].Draw(tileRect);
             }
         }
     }
 }
 
-public enum GridCell
+public class GridCell
 {
-    Wall,
-    Floor,
-    Box,
+    FloorElement floorElement = FloorElement.Floor; // Default value
+    SurfaceElement? surfaceElement;
+
+    public void Draw(Rectangle rect)
+    {
+        // Draw floor element
+        DrawRectangleRec(rect, Colors.FloorColors[floorElement]);
+
+        // Draw surface element
+        if (surfaceElement is not null)
+            DrawRectangleRec(rect, Colors.SurfaceColors[surfaceElement.Value]);
+    }
+}
+
+public enum FloorElement
+{
+    Floor = 0,
     Target,
     PlayerGoal,
+}
+
+public enum SurfaceElement
+{
+    Wall,
+    Box,
     Player
 }

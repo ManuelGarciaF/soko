@@ -1,0 +1,11 @@
+#+title: Todo
+
+* TODO Undo
+
+* TODO Winning / Advancing
+
+* TODO More levels
+
+* TODO Textures
+
+* TODO Resizing

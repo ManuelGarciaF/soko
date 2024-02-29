@@ -1,42 +1,83 @@
 ﻿using static Raylib_cs.Raylib;
+using static Raylib_cs.ConfigFlags;
 using Raylib_cs;
 
 namespace Game;
 
 static class Game
 {
-    const int WindowHeight = 600;
+    const int WindowHeight = 800;
     const int WindowWidth = 800;
     const int WindowMargin = 20;
     const string WindowTitle = "Soko";
+    const int FontSize = 24;
+
 
     private static Board? board;
+    private static int currentLevel = 1;
 
     public static void Main()
     {
         InitWindow(WindowWidth, WindowHeight, WindowTitle);
-        SetTargetFPS(1);
+        SetTargetFPS(60);
 
-        Rectangle boardRect = GetCenteredBoardRect();
+        ClearWindowState(ResizableWindow);
 
-        board = Levels.FromCsv("data/levels/level1");
+        // Load level 1.
+        board = Levels.LoadLevel(currentLevel);
 
         while (!WindowShouldClose())
         {
-            DrawFrame(boardRect);
+            UpdateDrawFrame();
         }
-
         CloseWindow();
     }
 
-    private static void DrawFrame(Rectangle boardRect)
+
+    private static void UpdateDrawFrame()
     {
+        Rectangle boardRect = GetCenteredBoardRect();
+
+        HandleKeyboard();
+
         BeginDrawing();
+
         ClearBackground(Colors.Background);
 
         board?.Draw(boardRect);
 
+        DrawText($"Level {currentLevel}", 5, 5, FontSize, Color.RayWhite);
+
+        // Show info on controls during first level.
+        if (currentLevel == 1)
+            DrawControls();
+
         EndDrawing();
+    }
+
+    private static void HandleKeyboard()
+    {
+        if (IsKeyPressed(KeyboardKey.Left) || IsKeyPressed(KeyboardKey.A)) board?.MovePlayers(Direction.Left);
+        if (IsKeyPressed(KeyboardKey.Right) || IsKeyPressed(KeyboardKey.D)) board?.MovePlayers(Direction.Right);
+        if (IsKeyPressed(KeyboardKey.Up) || IsKeyPressed(KeyboardKey.W)) board?.MovePlayers(Direction.Up);
+        if (IsKeyPressed(KeyboardKey.Down) || IsKeyPressed(KeyboardKey.S)) board?.MovePlayers(Direction.Down);
+
+        if (IsKeyPressed(KeyboardKey.R))
+        {
+            board = Levels.LoadLevel(currentLevel);
+        }
+
+        // if (IsKeyPressed(KeyboardKey.Z)) ; // TODO Undo
+
+    }
+
+    private static void DrawControls()
+    {
+        DrawText("WASD/Arrow Keys to move, R to restart, ESC to exit",
+                 5,
+                 WindowHeight - 5 - FontSize,
+                 FontSize,
+                 Color.RayWhite);
     }
 
     private static Rectangle GetCenteredBoardRect()
@@ -50,68 +91,4 @@ static class Game
 
         return new Rectangle(x, y, boardSize, boardSize);
     }
-}
-
-public class Board
-{
-    private GridCell[,] board;
-
-    public Board(GridCell[,] board)
-    {
-        this.board = board;
-    }
-
-    public void Draw(Rectangle rect)
-    {
-        // Calculate tile size
-        int tileSize = (int)Math.Min(rect.Width / board.GetLength(0), rect.Height / board.GetLength(1));
-
-        for (int x = 0; x < board.GetLength(0); x++)
-        {
-            for (int y = 0; y < board.GetLength(1); y++)
-            {
-                Rectangle tileRect = new Rectangle(rect.X + x * tileSize, rect.Y + y * tileSize, tileSize, tileSize);
-                board[x, y].Draw(tileRect);
-            }
-        }
-    }
-}
-
-public class GridCell
-{
-    FloorElement? floorElement; // Default value
-    SurfaceElement? surfaceElement;
-
-    public GridCell(FloorElement? floorElement, SurfaceElement? surfaceElement)
-    {
-        this.floorElement = floorElement;
-        this.surfaceElement = surfaceElement;
-    }
-
-    public void Draw(Rectangle rect)
-    {
-        // Draw floor element
-        if (floorElement is not null)
-            DrawRectangleRec(rect, Colors.FloorColors[floorElement.Value]);
-
-        // Draw surface element above it
-        if (surfaceElement is not null)
-            DrawRectangleRec(rect, Colors.SurfaceColors[surfaceElement.Value]);
-    }
-
-    public override string ToString() => $"{floorElement},{surfaceElement} ";
-}
-
-public enum FloorElement
-{
-    Floor = 0,
-    Button,
-    Goal,
-}
-
-public enum SurfaceElement
-{
-    Wall,
-    Box,
-    Player
 }

@@ -4,15 +4,27 @@ using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 
+// Helpers for loading levels from disk
 public static class Levels
 {
-    public static Board FromCsv(string basePath)
+    public static Board LoadLevel(int levelId)
+    {
+        return FromCsv(levelPaths[levelId]);
+    }
+
+    private static Dictionary<int, string> levelPaths = new()
+    {
+        [1] = "data/levels/level1"
+    };
+
+    private static Board FromCsv(string basePath)
     {
         // basePath example: "data/levels/level1"
         var pathFloor = $"{basePath}_floor.csv";
         var pathSurface = $"{basePath}_surface.csv";
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+
         {
             NewLine = Environment.NewLine, // REVIEW Check if necessary
             HasHeaderRecord = false

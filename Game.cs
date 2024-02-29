@@ -19,7 +19,7 @@ static class Game
 
         Rectangle boardRect = GetCenteredBoardRect();
 
-        // board = Levels.Level1;
+        board = Levels.FromCsv("data/levels/test");
 
         while (!WindowShouldClose())
         {
@@ -79,18 +79,27 @@ public class Board
 
 public class GridCell
 {
-    FloorElement floorElement = FloorElement.Floor; // Default value
+    FloorElement? floorElement; // Default value
     SurfaceElement? surfaceElement;
+
+    public GridCell(FloorElement? floorElement, SurfaceElement? surfaceElement)
+    {
+        this.floorElement = floorElement;
+        this.surfaceElement = surfaceElement;
+    }
 
     public void Draw(Rectangle rect)
     {
         // Draw floor element
-        DrawRectangleRec(rect, Colors.FloorColors[floorElement]);
+        if (floorElement is not null)
+            DrawRectangleRec(rect, Colors.FloorColors[floorElement.Value]);
 
-        // Draw surface element
+        // Draw surface element above it
         if (surfaceElement is not null)
             DrawRectangleRec(rect, Colors.SurfaceColors[surfaceElement.Value]);
     }
+
+    public override string ToString() => $"{floorElement},{surfaceElement} ";
 }
 
 public enum FloorElement

@@ -12,8 +12,11 @@ static class Game
     const string WindowTitle = "Soko";
     const int FontSize = 24;
 
+    const int UndoLimit = 50;
 
     private static Board? board;
+    private static DropOutStack<Board> previousStates = new(UndoLimit);
+
     private static int currentLevel = 1;
 
     public static void Main()
@@ -25,6 +28,7 @@ static class Game
 
         // Load level 1.
         board = Levels.LoadLevel(currentLevel);
+        SaveBoardState();
 
         while (!WindowShouldClose())
         {
@@ -57,19 +61,50 @@ static class Game
 
     private static void HandleKeyboard()
     {
-        if (IsKeyPressed(KeyboardKey.Left) || IsKeyPressed(KeyboardKey.A)) board?.MovePlayers(Direction.Left);
-        if (IsKeyPressed(KeyboardKey.Right) || IsKeyPressed(KeyboardKey.D)) board?.MovePlayers(Direction.Right);
-        if (IsKeyPressed(KeyboardKey.Up) || IsKeyPressed(KeyboardKey.W)) board?.MovePlayers(Direction.Up);
-        if (IsKeyPressed(KeyboardKey.Down) || IsKeyPressed(KeyboardKey.S)) board?.MovePlayers(Direction.Down);
+        if (IsKeyPressed(KeyboardKey.Left) || IsKeyPressed(KeyboardKey.A))
+            HandleMove(Direction.Left);
+        if (IsKeyPressed(KeyboardKey.Right) || IsKeyPressed(KeyboardKey.D))
+            HandleMove(Direction.Right);
+        if (IsKeyPressed(KeyboardKey.Up) || IsKeyPressed(KeyboardKey.W))
+            HandleMove(Direction.Up);
+        if (IsKeyPressed(KeyboardKey.Down) || IsKeyPressed(KeyboardKey.S))
+            HandleMove(Direction.Down);
 
         if (IsKeyPressed(KeyboardKey.R))
         {
+            ClearSavedStates();
             board = Levels.LoadLevel(currentLevel);
         }
 
-        // if (IsKeyPressed(KeyboardKey.Z)) ; // TODO Undo
+        if (IsKeyPressed(KeyboardKey.Z))
+            UndoAction();
 
     }
+
+    private static void HandleMove(Direction dir)
+    {
+        SaveBoardState();
+        board?.MovePlayers(dir);
+    }
+
+    private static void SaveBoardState()
+    {
+        if (board is not null)
+            previousStates.Push((Board)board.Clone());
+    }
+
+    private static void UndoAction()
+    {
+        if (!previousStates.CanPop()) return;
+
+        board = previousStates.Pop();
+    }
+
+    private static void ClearSavedStates()
+    {
+        previousStates.Clear();
+    }
+
 
     private static void DrawControls()
     {

@@ -3,15 +3,16 @@ using Raylib_cs;
 
 namespace Game;
 
-public class Board
+public class Board : ICloneable
 {
-    private GridCell[,] board;
+    private GridCell[,] grid;
 
-    private int boardSize { get => board.GetLength(0); }
+    // Assume all boards are square
+    private int boardSize { get => grid.GetLength(0); }
 
-    public Board(GridCell[,] board)
+    public Board(GridCell[,] grid)
     {
-        this.board = board;
+        this.grid = grid;
     }
 
     public void MovePlayers(Direction dir)
@@ -27,14 +28,14 @@ public class Board
     public void Draw(Rectangle rect)
     {
         // Calculate tile size
-        int tileSize = (int)Math.Min(rect.Width / board.GetLength(0), rect.Height / board.GetLength(1));
+        int tileSize = (int)Math.Min(rect.Width / grid.GetLength(0), rect.Height / grid.GetLength(1));
 
-        for (int x = 0; x < board.GetLength(0); x++)
+        for (int x = 0; x < grid.GetLength(0); x++)
         {
-            for (int y = 0; y < board.GetLength(1); y++)
+            for (int y = 0; y < grid.GetLength(1); y++)
             {
                 Rectangle tileRect = new Rectangle(rect.X + x * tileSize, rect.Y + y * tileSize, tileSize, tileSize);
-                board[x, y].Draw(tileRect);
+                grid[x, y].Draw(tileRect);
             }
         }
     }
@@ -47,7 +48,7 @@ public class Board
         {
             for (int y = 0; y < boardSize; y++)
             {
-                if (board[x, y].HasPlayer())
+                if (grid[x, y].HasPlayer())
                 {
                     list.Add(new Position { X = x, Y = y });
                 }
@@ -102,10 +103,20 @@ public class Board
         return pos.X >= 0 && pos.X < boardSize && pos.Y >= 0 && pos.Y < boardSize;
     }
 
-    private GridCell GetCell(Position pos) => board[pos.X, pos.Y];
+    private GridCell GetCell(Position pos) => grid[pos.X, pos.Y];
+
+    public object Clone()
+    {
+        var newGrid = new GridCell[boardSize, boardSize];
+        for (int x = 0; x < boardSize; x++) // Deep copy the 2D array
+            for (int y = 0; y < boardSize; y++)
+                newGrid[x, y] = (GridCell)grid[x, y].Clone();
+
+        return new Board(newGrid);
+    }
 }
 
-public class GridCell
+public class GridCell : ICloneable
 {
     public FloorElement? floorElement { get; }
     public SurfaceElement? surfaceElement { get; set; }
@@ -130,6 +141,11 @@ public class GridCell
     public bool HasPlayer() => surfaceElement == SurfaceElement.Player;
     public bool HasWall() => surfaceElement == SurfaceElement.Wall;
     public bool HasBox() => surfaceElement == SurfaceElement.Box;
+
+    public object Clone()
+    {
+        return new GridCell(this.floorElement, this.surfaceElement);
+    }
 }
 
 public enum FloorElement

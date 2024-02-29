@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="4" tileheight="4" infinite="0" nextlayerid="3" nextobjectid="1">
+ <editorsettings>
+  <export target="data/levels/level1.csv" format="csv"/>
+ </editorsettings>
+ <tileset firstgid="1" source="tiled/tiles/sokotiles.tsx"/>
+ <layer id="1" name="floor" width="8" height="8">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,
+1,1,5,1,1,1,1,1,
+1,1,5,1,1,1,1,1,
+1,1,1,1,1,6,1,1,
+1,1,1,1,1,1,1,1
+</data>
+ </layer>
+ <layer id="2" name="surface" width="8" height="8">
+  <data encoding="csv">
+2,2,2,2,2,2,2,2,
+2,0,0,2,0,0,3,2,
+2,0,0,0,0,0,0,2,
+2,0,4,4,0,0,0,2,
+2,0,0,2,0,0,0,2,
+2,0,0,2,0,0,0,2,
+2,0,0,2,0,0,0,2,
+2,2,2,2,2,2,2,2
+</data>
+ </layer>
+</map>

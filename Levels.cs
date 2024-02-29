@@ -9,8 +9,8 @@ public static class Levels
     public static Board FromCsv(string basePath)
     {
         // basePath example: "data/levels/level1"
-        var pathFloor = $"{basePath}_1.csv";
-        var pathSurface = $"{basePath}_2.csv";
+        var pathFloor = $"{basePath}_floor.csv";
+        var pathSurface = $"{basePath}_surface.csv";
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
@@ -31,7 +31,6 @@ public static class Levels
                 recordsFloor[0].Values.Count != recordsSurface[0].Values.Count)
                 throw new InvalidLevelFilesException("The CSV files for the level do not have the same dimensions");
 
-            // NOTE Change dimensions here if the map ends up flipped
             var boardGrid = new GridCell[recordsFloor.Count, recordsFloor[0].Values.Count];
             for (int y = 0; y < recordsFloor.Count; y++)
             {
@@ -39,11 +38,8 @@ public static class Levels
                 var surfaceRow = recordsSurface[y].Values;
                 for (int x = 0; x < floorRow.Count; x++)
                 {
-                    // NOTE Change here if the map ends up flipped
-                    boardGrid[x, y] = new GridCell(
-                        idToFloorElement[floorRow[x]],
-                        idToSurfaceElement[surfaceRow[x]]
-                    );
+                    boardGrid[x, y] = new GridCell(idToFloorElement[floorRow[x]],
+                                                   idToSurfaceElement[surfaceRow[x]]);
                 }
             }
             return new Board(boardGrid);
@@ -55,15 +51,15 @@ public static class Levels
     {
         [-1] = null,
         [0] = FloorElement.Floor,
-        [1] = FloorElement.Target,
-        [2] = FloorElement.PlayerGoal
+        [4] = FloorElement.Button,
+        [5] = FloorElement.Goal
     };
     private static readonly Dictionary<int, SurfaceElement?> idToSurfaceElement = new()
     {
         [-1] = null,
-        [0] = SurfaceElement.Wall,
-        [1] = SurfaceElement.Box,
-        [2] = SurfaceElement.Player
+        [1] = SurfaceElement.Wall,
+        [2] = SurfaceElement.Player,
+        [3] = SurfaceElement.Box
     };
 
     private class CsvRow

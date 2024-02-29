@@ -11,8 +11,8 @@ static class Colors
     public static readonly Dictionary<FloorElement, Color> FloorColors = new Dictionary<FloorElement, Color>()
     {
         [FloorElement.Floor] = Color.DarkBrown,
-        [FloorElement.Target] = Color.Yellow,
-        [FloorElement.PlayerGoal] = Color.Gold,
+        [FloorElement.Button] = Color.Yellow,
+        [FloorElement.Goal] = Color.Gold,
     };
 
     public static readonly Dictionary<SurfaceElement, Color> SurfaceColors = new Dictionary<SurfaceElement, Color>()

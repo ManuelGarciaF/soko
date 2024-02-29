@@ -19,7 +19,7 @@ static class Game
 
         Rectangle boardRect = GetCenteredBoardRect();
 
-        board = Levels.FromCsv("data/levels/test");
+        board = Levels.FromCsv("data/levels/level1");
 
         while (!WindowShouldClose())
         {
@@ -105,8 +105,8 @@ public class GridCell
 public enum FloorElement
 {
     Floor = 0,
-    Target,
-    PlayerGoal,
+    Button,
+    Goal,
 }
 
 public enum SurfaceElement

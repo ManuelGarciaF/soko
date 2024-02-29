@@ -6,10 +6,14 @@ static class Colors
 {
     public static readonly Color Background = Color.DarkGray;
     public static readonly Color Text = Color.RayWhite;
-    public static readonly Color Wall = Color.Gray;
-    public static readonly Color Floor = Color.DarkBrown;
-    public static readonly Color Player = Color.Orange;
-    public static readonly Color Box = Color.Green;
-    public static readonly Color PlayerGoal = Color.Gold;
-    public static readonly Color Target = Color.Yellow;
+
+    public static readonly Dictionary<GridCell, Color> CellColors = new Dictionary<GridCell, Color>()
+    {
+        [GridCell.Wall] = Color.Gray,
+        [GridCell.Floor] = Color.DarkBrown,
+        [GridCell.Box] = Color.Green,
+        [GridCell.Target] = Color.Yellow,
+        [GridCell.PlayerGoal] = Color.Gold,
+        [GridCell.Player] = Color.Orange
+    };
 }

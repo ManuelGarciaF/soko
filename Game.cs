@@ -1,6 +1,5 @@
 ﻿using static Raylib_cs.Raylib;
 using Raylib_cs;
-using CsvHelper;
 
 namespace Game;
 
@@ -11,7 +10,7 @@ static class Game
     const int WindowMargin = 20;
     const string WindowTitle = "Soko";
 
-    private static Board board;
+    private static Board? board;
 
     public static void Main()
     {
@@ -19,6 +18,8 @@ static class Game
         SetTargetFPS(1);
 
         Rectangle boardRect = GetCenteredBoardRect();
+
+        board = Levels.Level1;
 
         while (!WindowShouldClose())
         {
@@ -33,7 +34,7 @@ static class Game
         BeginDrawing();
         ClearBackground(Colors.Background);
 
-        board.Draw(boardRect);
+        board?.Draw(boardRect);
 
         EndDrawing();
     }
@@ -51,11 +52,11 @@ static class Game
     }
 }
 
-class Board
+public class Board
 {
-    private GridCell?[,] board;
+    private GridCell[,] board;
 
-    public Board(GridCell?[,] board)
+    public Board(GridCell[,] board)
     {
         this.board = board;
     }
@@ -70,33 +71,13 @@ class Board
             for (int y = 0; y < board.GetLength(1); y++)
             {
                 Rectangle tileRect = new Rectangle(rect.X + x * tileSize, rect.Y + y * tileSize, tileSize, tileSize);
-                switch (board[x, y])
-                {
-                    case GridCell.Wall:
-                        DrawRectangleRec(tileRect, Colors.Wall);
-                        break;
-                    case GridCell.Floor:
-                        DrawRectangleRec(tileRect, Colors.Floor);
-                        break;
-                    case GridCell.Box:
-                        DrawRectangleRec(tileRect, Colors.Box);
-                        break;
-                    case GridCell.Target:
-                        DrawRectangleRec(tileRect, Colors.Target);
-                        break;
-                    case GridCell.PlayerGoal:
-                        DrawRectangleRec(tileRect, Colors.PlayerGoal);
-                        break;
-                    case GridCell.Player:
-                        DrawRectangleRec(tileRect, Colors.Player);
-                        break;
-                }
+                DrawRectangleRec(tileRect, Colors.CellColors[board[x,y]]);
             }
         }
     }
 }
 
-enum GridCell
+public enum GridCell
 {
     Wall,
     Floor,

@@ -14,8 +14,21 @@ public class Board : ICloneable
 
     public void MovePlayers(Direction dir)
     {
-        foreach (var player in FindPlayers()) // Would not work properly for multiple players
-            MovePlayer(player, dir);
+        foreach (var playerPos in FindObjects(SurfaceObject.Player)) // Would not work properly for multiple players
+            MovePlayer(playerPos, dir);
+    }
+
+    public bool IsInWinState()
+    {
+        var buttons = FindObjects(FloorObject.Button).Select(pos => GetCell(pos));
+        // Check there are boxes on every button.
+        if (!buttons.All(cell => cell.HasObject(SurfaceObject.Box))) return false;
+
+        var goals = FindObjects(FloorObject.Goal).Select(pos => GetCell(pos));
+        // Check there is a player on a flag.
+        if (!goals.Any(cell => cell.HasObject(SurfaceObject.Player))) return false;
+
+        return true;
     }
 
     public void Draw(Rectangle rect)
@@ -33,7 +46,17 @@ public class Board : ICloneable
         }
     }
 
-    private List<Position> FindPlayers()
+    public object Clone()
+    {
+        var newGrid = new GridCell[grid.GetLength(0), grid.GetLength(1)];
+        for (int x = 0; x < grid.GetLength(0); x++) // Deep copy the 2D array
+            for (int y = 0; y < grid.GetLength(1); y++)
+                newGrid[x, y] = (GridCell)grid[x, y].Clone();
+
+        return new Board(newGrid);
+    }
+
+    private List<Position> FindObjects(SurfaceObject objectType)
     {
         var list = new List<Position>();
 
@@ -41,7 +64,25 @@ public class Board : ICloneable
         {
             for (int y = 0; y < grid.GetLength(1); y++)
             {
-                if (grid[x, y].HasPlayer())
+                if (grid[x, y].HasObject(objectType))
+                {
+                    list.Add(new Position { X = x, Y = y });
+                }
+            }
+        }
+
+        return list;
+    }
+
+    private List<Position> FindObjects(FloorObject objectType)
+    {
+        var list = new List<Position>();
+
+        for (int x = 0; x < grid.GetLength(0); x++)
+        {
+            for (int y = 0; y < grid.GetLength(1); y++)
+            {
+                if (grid[x, y].HasObject(objectType))
                 {
                     list.Add(new Position { X = x, Y = y });
                 }
@@ -56,9 +97,9 @@ public class Board : ICloneable
         Position nextPos = playerPos.AddDisplacement(dir);
         GridCell targetCell = GetCell(nextPos);
 
-        if (!IsInsideBoard(nextPos) || targetCell.HasWall()) return; // Don't move
+        if (!IsInsideBoard(nextPos) || targetCell.HasObject(SurfaceObject.Wall)) return; // Don't move
 
-        if (targetCell.HasBox())
+        if (targetCell.HasObject(SurfaceObject.Box))
         {
             if (!CanPush(nextPos, dir)) return; // Don't move
 
@@ -75,7 +116,7 @@ public class Board : ICloneable
         GridCell targetCell = GetCell(nextPos);
 
         // No multipush :)
-        if (targetCell.HasWall() || targetCell.HasBox()) return false;
+        if (targetCell.HasObject(SurfaceObject.Wall) || targetCell.HasObject(SurfaceObject.Box)) return false;
 
         return true;
 
@@ -97,24 +138,14 @@ public class Board : ICloneable
     }
 
     private GridCell GetCell(Position pos) => grid[pos.X, pos.Y];
-
-    public object Clone()
-    {
-        var newGrid = new GridCell[grid.GetLength(0), grid.GetLength(1)];
-        for (int x = 0; x < grid.GetLength(0); x++) // Deep copy the 2D array
-            for (int y = 0; y < grid.GetLength(1); y++)
-                newGrid[x, y] = (GridCell)grid[x, y].Clone();
-
-        return new Board(newGrid);
-    }
 }
 
 public class GridCell : ICloneable
 {
-    public FloorElement? floorElement { get; }
-    public SurfaceElement? surfaceElement { get; set; }
+    public FloorObject? floorElement { get; }
+    public SurfaceObject? surfaceElement { get; set; }
 
-    public GridCell(FloorElement? floorElement, SurfaceElement? surfaceElement)
+    public GridCell(FloorObject? floorElement, SurfaceObject? surfaceElement)
     {
         this.floorElement = floorElement;
         this.surfaceElement = surfaceElement;
@@ -131,9 +162,8 @@ public class GridCell : ICloneable
             DrawRectangleRec(rect, Colors.SurfaceColors[surfaceElement.Value]);
     }
 
-    public bool HasPlayer() => surfaceElement == SurfaceElement.Player;
-    public bool HasWall() => surfaceElement == SurfaceElement.Wall;
-    public bool HasBox() => surfaceElement == SurfaceElement.Box;
+    public bool HasObject(SurfaceObject obj) => surfaceElement == obj;
+    public bool HasObject(FloorObject obj) => floorElement == obj;
 
     public object Clone()
     {
@@ -141,14 +171,14 @@ public class GridCell : ICloneable
     }
 }
 
-public enum FloorElement
+public enum FloorObject
 {
     Floor,
     Button,
     Goal,
 }
 
-public enum SurfaceElement
+public enum SurfaceObject
 {
     Wall,
     Box,

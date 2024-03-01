@@ -8,17 +8,17 @@ static class Colors
     public static readonly Color Background = Color.DarkGray;
     public static readonly Color Text = Color.RayWhite;
 
-    public static readonly Dictionary<FloorElement, Color> FloorColors = new Dictionary<FloorElement, Color>()
+    public static readonly Dictionary<FloorObject, Color> FloorColors = new Dictionary<FloorObject, Color>()
     {
-        [FloorElement.Floor] = Color.DarkBrown,
-        [FloorElement.Button] = Color.Yellow,
-        [FloorElement.Goal] = Color.Gold,
+        [FloorObject.Floor] = Color.DarkBrown,
+        [FloorObject.Button] = Color.Yellow,
+        [FloorObject.Goal] = Color.Gold,
     };
 
-    public static readonly Dictionary<SurfaceElement, Color> SurfaceColors = new Dictionary<SurfaceElement, Color>()
+    public static readonly Dictionary<SurfaceObject, Color> SurfaceColors = new Dictionary<SurfaceObject, Color>()
     {
-        [SurfaceElement.Wall] = Color.Gray,
-        [SurfaceElement.Box] = Color.Green,
-        [SurfaceElement.Player] = Color.Orange
+        [SurfaceObject.Wall] = Color.Gray,
+        [SurfaceObject.Box] = Color.Green,
+        [SurfaceObject.Player] = Color.Orange
     };
 }

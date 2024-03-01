@@ -11,6 +11,7 @@ static class Game
     const int WindowMargin = 20;
     const string WindowTitle = "Soko";
     const int FontSize = 24;
+    const int FontSizeLarge = 48;
 
     const int UndoLimit = 50;
 
@@ -18,6 +19,14 @@ static class Game
     private static DropOutStack<Board> previousStates = new(UndoLimit);
 
     private static int currentLevel = 1;
+
+    private enum Screen
+    {
+        Title,
+        Gameplay,
+        End
+    }
+    private static Screen currentScreen = Screen.Title;
 
     public static void Main()
     {
@@ -34,6 +43,7 @@ static class Game
         {
             UpdateDrawFrame();
         }
+
         CloseWindow();
     }
 
@@ -42,24 +52,48 @@ static class Game
     {
         Rectangle boardRect = GetCenteredBoardRect();
 
-        HandleKeyboard();
-
         BeginDrawing();
 
         ClearBackground(Colors.Background);
 
-        board?.Draw(boardRect);
+        switch (currentScreen)
+        {
+            case Screen.Title:
+                HandleKeyboardTitle();
+                DrawText($"Soko", 5, 5, FontSizeLarge, Color.RayWhite);
+                DrawText($"Press any key to start", 5, 5 + FontSizeLarge + 5, FontSize, Color.RayWhite);
+                break;
 
-        DrawText($"Level {currentLevel}", 5, 5, FontSize, Color.RayWhite);
+            case Screen.Gameplay:
+                HandleKeyboardGameplay();
+                board?.Draw(boardRect);
+                DrawText($"Level {currentLevel}", 5, 5, FontSize, Color.RayWhite);
 
-        // Show info on controls during first level.
-        if (currentLevel == 1)
-            DrawControls();
+                // Show info on controls during first level.
+                if (currentLevel == 1)
+                    DrawControls();
+                break;
+
+            case Screen.End:
+                DrawText($"YOU WIN!", 5, 5, FontSizeLarge, Color.RayWhite);
+                break;
+        }
+
+
 
         EndDrawing();
     }
 
-    private static void HandleKeyboard()
+    private static void HandleKeyboardTitle()
+    {
+        var keyPress = (KeyboardKey)GetKeyPressed();
+        if (keyPress != KeyboardKey.Null && keyPress != KeyboardKey.Escape)
+        {
+            currentScreen = Screen.Gameplay;
+        }
+    }
+
+    private static void HandleKeyboardGameplay()
     {
         if (IsKeyPressed(KeyboardKey.Left) || IsKeyPressed(KeyboardKey.A))
             HandleMove(Direction.Left);
@@ -71,10 +105,7 @@ static class Game
             HandleMove(Direction.Down);
 
         if (IsKeyPressed(KeyboardKey.R))
-        {
-            ClearSavedStates();
-            board = Levels.LoadLevel(currentLevel);
-        }
+            LoadCurrentLevel(); // Reload level
 
         if (IsKeyPressed(KeyboardKey.Z))
             UndoAction();
@@ -85,6 +116,25 @@ static class Game
     {
         SaveBoardState();
         board?.MovePlayers(dir);
+
+        // Load next level if on win state.
+        if (board?.IsInWinState() ?? false)
+        {
+            if (currentLevel == Levels.LastLevelIndex)
+            {
+                currentScreen = Screen.End;
+                return;
+            }
+
+            currentLevel++;
+            LoadCurrentLevel();
+        }
+    }
+
+    private static void LoadCurrentLevel()
+    {
+        ClearSavedStates();
+        board = Levels.LoadLevel(currentLevel);
     }
 
     private static void SaveBoardState()

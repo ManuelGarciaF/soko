@@ -12,10 +12,12 @@ public static class Levels
         return FromCsv(levelPaths[levelId]);
     }
 
-    private static Dictionary<int, string> levelPaths = new()
+    private static readonly Dictionary<int, string> levelPaths = new()
     {
-        [1] = "data/levels/level1"
+        [1] = "data/levels/level1",
+        [2] = "data/levels/level2"
     };
+    public const int LastLevelIndex = 2;
 
     private static Board FromCsv(string basePath)
     {
@@ -58,19 +60,19 @@ public static class Levels
         }
     }
 
-    private static readonly Dictionary<int, FloorElement?> idToFloorElement = new()
+    private static readonly Dictionary<int, FloorObject?> idToFloorElement = new()
     {
         [-1] = null,
-        [0] = FloorElement.Floor,
-        [4] = FloorElement.Button,
-        [5] = FloorElement.Goal
+        [0] = FloorObject.Floor,
+        [4] = FloorObject.Button,
+        [5] = FloorObject.Goal
     };
-    private static readonly Dictionary<int, SurfaceElement?> idToSurfaceElement = new()
+    private static readonly Dictionary<int, SurfaceObject?> idToSurfaceElement = new()
     {
         [-1] = null,
-        [1] = SurfaceElement.Wall,
-        [2] = SurfaceElement.Player,
-        [3] = SurfaceElement.Box
+        [1] = SurfaceObject.Wall,
+        [2] = SurfaceObject.Player,
+        [3] = SurfaceObject.Box
     };
 
     private class CsvRow

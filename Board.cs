@@ -7,9 +7,6 @@ public class Board : ICloneable
 {
     private GridCell[,] grid;
 
-    // Assume all boards are square
-    private int boardSize { get => grid.GetLength(0); }
-
     public Board(GridCell[,] grid)
     {
         this.grid = grid;
@@ -17,12 +14,8 @@ public class Board : ICloneable
 
     public void MovePlayers(Direction dir)
     {
-        foreach (var player in FindPlayers())
-        {
+        foreach (var player in FindPlayers()) // Would not work properly for multiple players
             MovePlayer(player, dir);
-        }
-
-        // TODO Check for win status
     }
 
     public void Draw(Rectangle rect)
@@ -44,9 +37,9 @@ public class Board : ICloneable
     {
         var list = new List<Position>();
 
-        for (int x = 0; x < boardSize; x++)
+        for (int x = 0; x < grid.GetLength(0); x++)
         {
-            for (int y = 0; y < boardSize; y++)
+            for (int y = 0; y < grid.GetLength(1); y++)
             {
                 if (grid[x, y].HasPlayer())
                 {
@@ -100,16 +93,16 @@ public class Board : ICloneable
 
     private bool IsInsideBoard(Position pos)
     {
-        return pos.X >= 0 && pos.X < boardSize && pos.Y >= 0 && pos.Y < boardSize;
+        return pos.X >= 0 && pos.X < grid.GetLength(0) && pos.Y >= 0 && pos.Y < grid.GetLength(1);
     }
 
     private GridCell GetCell(Position pos) => grid[pos.X, pos.Y];
 
     public object Clone()
     {
-        var newGrid = new GridCell[boardSize, boardSize];
-        for (int x = 0; x < boardSize; x++) // Deep copy the 2D array
-            for (int y = 0; y < boardSize; y++)
+        var newGrid = new GridCell[grid.GetLength(0), grid.GetLength(1)];
+        for (int x = 0; x < grid.GetLength(0); x++) // Deep copy the 2D array
+            for (int y = 0; y < grid.GetLength(1); y++)
                 newGrid[x, y] = (GridCell)grid[x, y].Clone();
 
         return new Board(newGrid);

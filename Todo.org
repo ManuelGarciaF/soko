@@ -2,7 +2,7 @@
 
 * DONE Undo
 
-* TODO Winning / Advancing
+* DONE Winning / Advancing
 
 * TODO More levels
 

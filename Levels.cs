@@ -26,7 +26,6 @@ public static class Levels
         var pathSurface = $"{basePath}_surface.csv";
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-
         {
             NewLine = Environment.NewLine, // REVIEW Check if necessary
             HasHeaderRecord = false

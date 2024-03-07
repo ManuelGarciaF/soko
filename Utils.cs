@@ -48,6 +48,8 @@ public class DropOutStack<T>
         items[topIndex] = item;
 
         if (Count < items.Length) Count++;
+
+        // Wrap around if new index ends outside array size.
         topIndex = (topIndex + 1) % items.Length;
     }
 
@@ -57,6 +59,7 @@ public class DropOutStack<T>
 
         Count--;
 
+        // Wrap around if new index ends below 0.
         topIndex = (items.Length + topIndex - 1) % items.Length;
         return items[topIndex];
     }

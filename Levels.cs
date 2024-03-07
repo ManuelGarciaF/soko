@@ -14,8 +14,8 @@ public static class Levels
 
     private static readonly Dictionary<int, string> levelPaths = new()
     {
-        [1] = "data/levels/level1",
-        [2] = "data/levels/level2"
+        [1] = "resources/levels/level1",
+        [2] = "resources/levels/level2"
     };
     public const int LastLevelIndex = 2;
 

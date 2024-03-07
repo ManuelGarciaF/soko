@@ -27,7 +27,7 @@ public static class Levels
 
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            NewLine = Environment.NewLine, // REVIEW Check if necessary
+            NewLine = Environment.NewLine,
             HasHeaderRecord = false
         };
         // Open and create readers for both csv files

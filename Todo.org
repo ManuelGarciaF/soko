@@ -6,6 +6,6 @@
 
 * TODO More levels
 
-* TODO Textures
+* DONE Textures
 
 * TODO Resizing

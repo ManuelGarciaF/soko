@@ -12,6 +12,8 @@ static class Game
     const string WindowTitle = "Soko";
     const int FontSize = 24;
     const int FontSizeLarge = 48;
+    public static readonly Color BackgroundColor = Color.DarkGray;
+    public static readonly Color TextColor = Color.RayWhite;
 
     const int UndoLimit = 50;
 
@@ -44,6 +46,7 @@ static class Game
             UpdateDrawFrame();
         }
 
+        TextureManager.UnloadTextures();
         CloseWindow();
     }
 
@@ -54,20 +57,20 @@ static class Game
 
         BeginDrawing();
 
-        ClearBackground(Colors.Background);
+        ClearBackground(BackgroundColor);
 
         switch (currentScreen)
         {
             case Screen.Title:
                 HandleKeyboardTitle();
-                DrawText($"Soko", 5, 5, FontSizeLarge, Color.RayWhite);
-                DrawText($"Press any key to start", 5, 5 + FontSizeLarge + 5, FontSize, Color.RayWhite);
+                DrawText($"Soko", 5, 5, FontSizeLarge, TextColor);
+                DrawText($"Press any key to start", 5, 5 + FontSizeLarge + 5, FontSize, TextColor);
                 break;
 
             case Screen.Gameplay:
                 HandleKeyboardGameplay();
                 board?.Draw(boardRect);
-                DrawText($"Level {currentLevel}", 5, 5, FontSize, Color.RayWhite);
+                DrawText($"Level {currentLevel}", 5, 5, FontSize, TextColor);
 
                 // Show info on controls during first level.
                 if (currentLevel == 1)
@@ -75,7 +78,7 @@ static class Game
                 break;
 
             case Screen.End:
-                DrawText($"YOU WIN!", 5, 5, FontSizeLarge, Color.RayWhite);
+                DrawText($"YOU WIN!", 5, 5, FontSizeLarge, TextColor);
                 break;
         }
 
@@ -133,7 +136,7 @@ static class Game
 
     private static void LoadCurrentLevel()
     {
-        ClearSavedStates();
+        previousStates.Clear(); // Remove undo history.
         board = Levels.LoadLevel(currentLevel);
     }
 
@@ -149,12 +152,6 @@ static class Game
 
         board = previousStates.Pop();
     }
-
-    private static void ClearSavedStates()
-    {
-        previousStates.Clear();
-    }
-
 
     private static void DrawControls()
     {

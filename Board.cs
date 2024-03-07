@@ -1,4 +1,3 @@
-using static Raylib_cs.Raylib;
 using Raylib_cs;
 
 namespace Game;
@@ -103,11 +102,11 @@ public class Board : ICloneable
         {
             if (!CanPush(nextPos, dir)) return; // Don't move
 
-            MoveSurfaceElement(nextPos, dir); // Move box and continue to move the player.
+            MoveSurfaceObject(nextPos, dir); // Move box and continue to move the player.
         }
 
         // Move the player.
-        MoveSurfaceElement(playerPos, dir);
+        MoveSurfaceObject(playerPos, dir);
     }
 
     private bool CanPush(Position pos, Direction dir)
@@ -122,14 +121,14 @@ public class Board : ICloneable
 
     }
 
-    private void MoveSurfaceElement(Position pos, Direction dir)
+    private void MoveSurfaceObject(Position pos, Direction dir)
     {
         Position nextPos = pos.AddDisplacement(dir);
         GridCell sourceCell = GetCell(pos);
         GridCell targetCell = GetCell(nextPos);
 
-        targetCell.surfaceElement = sourceCell.surfaceElement;
-        sourceCell.surfaceElement = null;
+        targetCell.surfaceObject = sourceCell.surfaceObject;
+        sourceCell.surfaceObject = null;
     }
 
     private bool IsInsideBoard(Position pos)
@@ -142,32 +141,32 @@ public class Board : ICloneable
 
 public class GridCell : ICloneable
 {
-    public FloorObject? floorElement { get; }
-    public SurfaceObject? surfaceElement { get; set; }
+    public FloorObject? floorObject { get; }
+    public SurfaceObject? surfaceObject { get; set; }
 
-    public GridCell(FloorObject? floorElement, SurfaceObject? surfaceElement)
+    public GridCell(FloorObject? floorObject, SurfaceObject? surfaceObject)
     {
-        this.floorElement = floorElement;
-        this.surfaceElement = surfaceElement;
+        this.floorObject = floorObject;
+        this.surfaceObject = surfaceObject;
     }
 
-    public void Draw(Rectangle rect)
+    public void Draw(Rectangle rectangle)
     {
-        // Draw floor element
-        if (floorElement is not null)
-            DrawRectangleRec(rect, Colors.FloorColors[floorElement.Value]);
+        // Draw floor object
+        if (floorObject is not null)
+            TextureManager.DrawInRectangle(floorObject.Value, rectangle);
 
-        // Draw surface element above it
-        if (surfaceElement is not null)
-            DrawRectangleRec(rect, Colors.SurfaceColors[surfaceElement.Value]);
+        // Draw surface object above it
+        if (surfaceObject is not null)
+            TextureManager.DrawInRectangle(surfaceObject.Value, rectangle);
     }
 
-    public bool HasObject(SurfaceObject obj) => surfaceElement == obj;
-    public bool HasObject(FloorObject obj) => floorElement == obj;
+    public bool HasObject(SurfaceObject obj) => surfaceObject == obj;
+    public bool HasObject(FloorObject obj) => floorObject == obj;
 
     public object Clone()
     {
-        return new GridCell(this.floorElement, this.surfaceElement);
+        return new GridCell(this.floorObject, this.surfaceObject);
     }
 }
 

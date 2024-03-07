@@ -165,6 +165,7 @@ static class Game
                  Color.RayWhite);
     }
 
+    /* Calculates a centered square to put the board in */
     private static Rectangle GetCenteredBoardRect()
     {
         int availableWidth = WindowWidth - 2 * WindowMargin;

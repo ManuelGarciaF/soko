@@ -44,7 +44,7 @@ public static class Levels
                 recordsFloor[0].Values.Count != recordsSurface[0].Values.Count)
                 throw new InvalidLevelFilesException("The CSV files for the level do not have the same dimensions");
 
-            var boardGrid = new GridCell[recordsFloor.Count, recordsFloor[0].Values.Count];
+            var boardGrid = new GridCell[recordsFloor[0].Values.Count, recordsFloor.Count];
             for (int y = 0; y < recordsFloor.Count; y++)
             {
                 var floorRow = recordsFloor[y].Values;

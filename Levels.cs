@@ -15,9 +15,10 @@ public static class Levels
     private static readonly Dictionary<int, string> levelPaths = new()
     {
         [1] = "resources/levels/level1",
-        [2] = "resources/levels/level2"
+        [2] = "resources/levels/level2",
+        [3] = "resources/levels/level3"
     };
-    public const int LastLevelIndex = 2;
+    public const int LastLevelIndex = 3;
 
     private static Board FromCsv(string basePath)
     {

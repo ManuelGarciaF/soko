@@ -3,7 +3,7 @@
  <editorsettings>
   <export target="data/levels/level1.csv" format="csv"/>
  </editorsettings>
- <tileset firstgid="1" source="tiled/tiles/sokotiles.tsx"/>
+ <tileset firstgid="1" source="tiles/sokotiles.tsx"/>
  <layer id="1" name="floor" width="8" height="8">
   <data encoding="csv">
 1,1,1,1,1,1,1,1,

@@ -1,9 +1,0 @@
-#+title: Todo
-
-* DONE Undo
-
-* DONE Winning / Advancing
-
-* TODO More levels
-
-* DONE Textures
